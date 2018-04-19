@@ -32,7 +32,7 @@ class suffixTree{
 	void insert(std::string input);
 	bool search(std::string input);
 	std::vector <std::string> endsWith(std::string  input);
-}
+};
 
 
 //Loads data structures using file with name dictName
