@@ -1,5 +1,5 @@
 CPP = g++
-CFLAGS = -o
+CFLAGS = -std=c++11 -o
 
 .PHONY: serverA serverB serverC aws monitor
 
