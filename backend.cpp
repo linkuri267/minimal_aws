@@ -16,6 +16,9 @@ int getAlphIndex(char c){
 	else if((int)c == 0x27){ //' character'
 		alphIndex = 28;
 	}
+	else if(c == '.'){
+		alphIndex = 29;
+	}
 	else if(((int)c >= 0x41)&&((int)c <= 0x5A)){ //capital
 		alphIndex = (int)c - 0x40;
 	}
@@ -35,6 +38,9 @@ char getCharFromIndex(int index){
 	}
 	else if(index == 28){
 		c = (char)0x27;
+	}
+	else if(index == 29){
+		c = '.';
 	}
 	else{
 		c = (char)(index + 0x60);
@@ -121,7 +127,7 @@ std::vector <std::string> prefixTree::startsWith(std::string input){
 }
 
 
-void startup(std::string dictName, std::unordered_map <std::string,std::string>& dictionary, prefixTree& prefix){
+void startup(std::string dictName, std::unordered_map <std::string,std::string>& dictionary, prefixTree& prefix, suffixTree& suffix){
 	std::ifstream dictIn;
 	dictIn.open(dictName);
 	std::string tempLine;
@@ -149,7 +155,7 @@ void startup(std::string dictName, std::unordered_map <std::string,std::string>&
 //returns empty string if none found
 std::string findSimilar(std::string word, std::unordered_map <std::string, std::string>& dict){
 	std::string temp = "";
-	char specialCharacters[] = {' ','-',(char)0x27};
+	char specialCharacters[] = {' ','-',(char)0x27,'.'};
 	std::vector <std::string> similars;
  
 	for(int i = 0; i < word.length(); i++){
@@ -169,7 +175,7 @@ std::string findSimilar(std::string word, std::unordered_map <std::string, std::
 			}
 		}
 		//special characters
-		for(int l = 0; l < 3; l++){
+		for(int l = 0; l < 4; l++){
 			temp[i] = specialCharacters[l];
 			if((dict.find(temp) != dict.end())&&(temp != word)){
 				similars.push_back(temp);
