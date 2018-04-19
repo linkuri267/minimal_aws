@@ -1,0 +1,38 @@
+Name: David Chen
+USCID: 1722561951
+
+Working parts:
+aws, backend (prefix,search), client, monitor
+
+aws.c: the server that clients make requests to. it sends the request to backend servers and aggregates response to send to monitor and client
+aws_routines.cpp: includes functions like data aggregation 
+aws_routines.h: header for file above
+backend.cpp: includes functions for searching/prefixing input and also message formatting. also has some data structures I implemented
+backend.h: header for file above
+client.c: client app
+monitor.c: monitor app
+serverX (A,B,C): server app
+
+Format of Messages:
+
+Output format (from backend/to monitor):
+DIDN'T FIND ANYTHING: 0&INPUT
+SEARCH AND FOUND SIMILAR: 1&INPUT&VALUE&WORD&DEFINITION
+SEARCH AND DIDN'T FIND SIMILAR: 1&INPUT&VALUE
+DIDNT FIND BUT FOUND SIMILAR: 1&&INPUT&WORD&DEFINITION
+PREFIX/SUFFIX: (2/3)&n&INPUT&VALUE1&VALUE2&VALUE3...&VALUEn
+
+Message format (to client):
+If not found: '&\0'
+If search: 'VALUE\0'
+If prefix or suffix: 'n&VALUE1&VALUE2&VALUE3...&VALUEn\0'
+
+Request format (from client):
+SEARCH: 1&INPUT
+PREFIX: 2&INPUT
+SUFFIX: 3&INPUT
+
+
+I used code from Beej's network programming guide, specifically from client.c, server.c, listener,c and talker.c
+
+Prefix function fails under high amounts of data, ie number of words > 50
