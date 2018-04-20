@@ -9,30 +9,34 @@ aws_routines.cpp: includes functions like data aggregation
 aws_routines.h: header for file above
 backend.cpp: includes functions for searching/prefixing input and also message formatting. also has some data structures I implemented
 backend.h: header for file above
-client.c: client app
-monitor.c: monitor app
-serverX (A,B,C): server app
+client.c: client program
+monitor.c: monitor program
+serverX (A,B,C): lookup program
 
-Format of Messages:
+Format of messages:
 
-Output format (from backend/to monitor):
-DIDN'T FIND ANYTHING: 0&INPUT
-SEARCH AND FOUND SIMILAR: 1&INPUT&VALUE&WORD&DEFINITION
-SEARCH AND DIDN'T FIND SIMILAR: 1&INPUT&VALUE
-DIDNT FIND BUT FOUND SIMILAR: 1&&INPUT&WORD&DEFINITION
-PREFIX/SUFFIX: (2/3)&n&INPUT&VALUE1&VALUE2&VALUE3...&VALUEn
+	from backend/to monitor:
+		no results found: 0&INPUT
+		search:
+			found a definition and found similar word: 1&INPUT&VALUE&WORD&DEFINITION
+			found a definition but no similar word: 1&INPUT&VALUE
+			didn't find a definition but found a similar word: 1&&INPUT&WORD&DEFINITION
+		prefix(2)/suffix(3):
+			(2/3)&n&INPUT&VALUE1&VALUE2&VALUE3...&VALUEn
 
-Message format (to client):
-If not found: '&\0'
-If search: 'VALUE\0'
-If prefix or suffix: 'n&VALUE1&VALUE2&VALUE3...&VALUEn\0'
+	to client:
+		no results found: &\0
+		search: 'VALUE\0'
+		prefix/suffix: 'n&VALUE1&VALUE2&VALUE3...&VALUEn\0'
 
-Request format (from client):
-SEARCH: 1&INPUT
-PREFIX: 2&INPUT
-SUFFIX: 3&INPUT
+	from client:
+		search: 1&INPUT
+		prefix: 2&INPUT
+		suffix: 3&INPUT
 
 
-I used code from Beej's network programming guide, specifically from client.c, server.c, listener,c and talker.c
+References:
+	I used code from Beej's network programming guide, specifically from client.c, server.c, listener,c and talker.c
 
-Prefix function fails under high amounts of data, ie number of words > 50
+Issues:
+	Prefix function fails under high amounts of data, ie number of words > 50 because of message buffer size
