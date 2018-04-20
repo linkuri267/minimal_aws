@@ -269,7 +269,7 @@ int main(int argc, char const *argv[])
 	    	exit(1);
 	    }
 	    else{
-	    	printf("Received from AWS:%s\n",inputBuffer);
+	    	//printf("Received from AWS:%s\n",inputBuffer);
 	    	printReceivedMonitor(inputBuffer);
 	    }
 	}

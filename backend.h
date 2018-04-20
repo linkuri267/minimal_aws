@@ -20,9 +20,9 @@ public:
 };
 
 typedef struct suffixTreeNode{
-	suffixTreeNode* chilren[29];
+	suffixTreeNode* children[30];
 	bool start;
-};
+}suffixTreeNode;
 
 class suffixTree{
 	private:
@@ -36,7 +36,7 @@ class suffixTree{
 
 
 //Loads data structures using file with name dictName
-void startup(std::string dictName, std::unordered_map <std::string,std::string>& dictionary, prefixTree& prefix, suffixTree& suffix);
+void startup(std::string dictName, std::unordered_map <std::string,std::string>& dictionary, prefixTree& prefix);
 //Output format:
 	//DIDN'T FIND ANYTHING: 0&INPUT
 	//SEARCH AND FOUND SIMILAR: 1&INPUT&VALUE&WORD&DEFINITION

@@ -41,7 +41,8 @@ int main(int argc, char const *argv[])
 	//load dictionary and tries
 	std::unordered_map <std::string, std::string> myDictionary;
 	prefixTree myPrefixTree = prefixTree();
-	startup(FILE_NAME,myDictionary,myPrefixTree);
+    suffixTree mySuffixTree = suffixTree();
+	startup(FILE_NAME,myDictionary,myPrefixTree,mySuffixTree);
 
 	//Following taken from Beej listener.c
 	int sockfd_in;
@@ -143,7 +144,7 @@ int main(int argc, char const *argv[])
 	    		output = prefix(buf_in,myPrefixTree,'A');
 	    		break;
 	    	case '3':
-	    		output = suffix(buf_in);
+	    		output = suffix(buf_in,mySuffixTree,'A');
 	    		break;
 	    	otherwise:
 	    		std::cout << "Invalid Request " << buf_in[0]<< std::endl;

@@ -95,7 +95,7 @@ void startsWithHelper(prefixTreeNode* it, std::string current, std::vector <std:
 	if(it->end){
 		words.push_back(current);
 	}	
-	for(int i = 0; i < 29; i++){
+	for(int i = 0; i < 30; i++){
 		if(it->children[i] != NULL){
 			startsWithHelper(it->children[i],current + getCharFromIndex(i), words);
 		}
@@ -112,7 +112,6 @@ std::vector <std::string> prefixTree::startsWith(std::string input){
 	//Get to node 
 	for(int i = 0; i < input.size(); i++){
 		alphIndex = getAlphIndex(input[i]);
-
 		if(it->children[alphIndex] == NULL){
 			return(words);
 		}
@@ -125,6 +124,80 @@ std::vector <std::string> prefixTree::startsWith(std::string input){
 	startsWithHelper(it,current,words);
 	return(words);
 }
+
+suffixTree::suffixTree(){
+	this->head = new suffixTreeNode;
+}
+
+
+void suffixTree::insert(std::string input){
+	suffixTreeNode* it = this->head;
+	int alphIndex;
+	int i = input.size() -1;
+	while(i >= 0){
+		alphIndex = getAlphIndex(input[i]);
+		if(it->children[alphIndex] == NULL){
+			it->children[alphIndex] = new suffixTreeNode();
+
+		}
+		it = it->children[alphIndex];
+		i--;
+	}
+	it->start = true;
+}
+
+bool suffixTree::search(std::string input){
+	suffixTreeNode* it = this->head;
+	int alphIndex;
+	for(int i = input.size() - 1; i >= 0; i --){
+		alphIndex = getAlphIndex(input[i]);
+		if(it->children[alphIndex] == NULL){
+			return(false);
+		}
+		it = it->children[alphIndex];
+	}		
+	if(it->start){
+		return(true);
+	} 
+	else{
+		return(false);
+	}
+}
+
+
+void endsWithHelper(std::vector <std::string>& values, suffixTreeNode* it, std::string current){
+	if(it->start){
+		values.push_back(current);
+	}
+	for(int i = 0; i < 30; i++){
+		if(it->children[i] != NULL){
+			endsWithHelper(values,it->children[i],getCharFromIndex(i)+ current);
+		}
+	}
+	return;
+}
+
+std::vector <std::string> suffixTree::endsWith(std::string input){
+	suffixTreeNode* it = this->head;
+	int alphIndex;
+	std::vector <std::string> values (0);
+
+	//get to the furthest node
+	for(int i = input.size() -1 ; i >= 0; i --){
+		alphIndex = getAlphIndex(input[i]);
+		if(it->children[alphIndex] == NULL){
+			return values;
+		}
+		it = it->children[alphIndex];
+	}
+	if(it->start){
+		values.push_back(input);
+	}
+	endsWithHelper(values,it,input);
+	return(values);
+
+}
+
 
 
 void startup(std::string dictName, std::unordered_map <std::string,std::string>& dictionary, prefixTree& prefix, suffixTree& suffix){
@@ -147,6 +220,7 @@ void startup(std::string dictName, std::unordered_map <std::string,std::string>&
 		dictionary.insert({tempWord,tempDef});
 		//std::cout << "Word:" << tempWord << " Definition:" << tempDef << std::endl;
 		prefix.insert(tempWord);
+		suffix.insert(tempWord);
 	}
 
 }
@@ -315,21 +389,49 @@ char* prefix(char* input, prefixTree& prefix, char server){
 	return(out_c);
 }
 
-char* suffix(char* input){
+char* suffix(char* input, suffixTree& suffix, char server){
+	std::string inputWord;
+	std::string out;
+	char* out_c;
+	int i = 2;
+	while(input[i] != '\0'){
+		inputWord += input[i];
+		i++;
+	}
+	std::cout << "The server" << server << " received input <" << inputWord << "> and operation <suffix>" << std::endl;
+	std::vector <std::string> suffixes = suffix.endsWith(inputWord);
+	std::cout << "The Server" << server << " has found <" << suffixes.size() << "> matches" << std::endl; 
 
+
+	//format message
+	//PREFIX/SUFFIX: (2|3)&n&INPUT&VALUE1&VALUE2&VALUE3...&VALUEn
+
+	out += '2';
+	out += '&';
+	out.append(std::to_string(suffixes.size()));
+	out += '&';
+	out.append(inputWord);
+	for(int i = 0; i < suffixes.size(); i++){
+		out += '&';
+		out.append(suffixes[i]);
+	}
+	out_c = new char[out.length()+1];
+	strcpy(out_c,out.c_str());
+	return(out_c);
 }
 
-//Tester
+
 // int main(int argc, char const *argv[])
 // {
 // 	std::unordered_map <std::string, std::string> dictionary;
 // 	prefixTree myTrie = prefixTree();
-// 	startup("backendC.txt",dictionary,myTrie);
+// 	suffixTree mySuf = suffixTree();
+// 	startup("backendA.txt",dictionary,myTrie,mySuf);
 // 	std::string searchWord;
 // 	while(1){
 // 		std::cout << "enter word to prefix:";
 // 		std::cin >> searchWord;
-// 		char* messageOut = prefix(&searchWord[0],myTrie);
+// 		char* messageOut = prefix(&searchWord[0],myTrie,'A');
 // 		std::cout << messageOut << std::endl;
 // 	}
 // 	return 0;
